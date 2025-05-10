@@ -2,6 +2,7 @@ package ma.enset.web;
 
 import lombok.AllArgsConstructor;
 import ma.enset.dto.*;
+import ma.enset.enums.OperationType;
 import ma.enset.service.BankService;
 import org.springframework.web.bind.annotation.*;
 

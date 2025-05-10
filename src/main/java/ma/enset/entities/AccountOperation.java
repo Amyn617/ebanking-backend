@@ -2,6 +2,7 @@ package ma.enset.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ma.enset.enums.OperationType;
 
 import java.util.Date;
 
@@ -17,7 +18,9 @@ public class AccountOperation {
     private Long id;
     private Date operationDate;
     private double amount;
-    private String type;
+    
+    @Enumerated(EnumType.STRING)
+    private OperationType type;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private BankAccount bankAccount;
