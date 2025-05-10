@@ -6,18 +6,19 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @SpringBootApplication
-public class Main {
+public class MainApplication {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(MainApplication.class, args);
     }
 
     @Bean
+    @Transactional // Add transactional to ensure the session remains open
     CommandLineRunner start(CustomerRepository customerRepository,
                             BankAccountRepository bankAccountRepository,
                             AccountOperationRepository accountOperationRepository) {
@@ -46,13 +47,19 @@ public class Main {
                     .build());
 
             System.out.println("Customers:");
-            customerRepository.findAll().forEach(System.out::println);
+            customerRepository.findAll().forEach(customer -> 
+                System.out.println(String.format("Customer ID: %d, Name: %s, Email: %s", 
+                    customer.getId(), customer.getName(), customer.getEmail())));
 
             System.out.println("Accounts:");
-            bankAccountRepository.findAll().forEach(System.out::println);
+            bankAccountRepository.findAll().forEach(account -> 
+                System.out.println(String.format("Account ID: %s, Balance: %.2f, Customer: %s", 
+                    account.getId(), account.getBalance(), account.getCustomer().getName())));
 
             System.out.println("Operations:");
-            accountOperationRepository.findAll().forEach(System.out::println);
+            accountOperationRepository.findAll().forEach(op -> 
+                System.out.println(String.format("Operation ID: %d, Amount: %.2f, Type: %s, Account: %s", 
+                    op.getId(), op.getAmount(), op.getType(), op.getBankAccount().getId())));
         };
     }
 }

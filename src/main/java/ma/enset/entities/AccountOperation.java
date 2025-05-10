@@ -10,6 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "bankAccount") // Exclude bankAccount from toString to prevent recursion
 public class AccountOperation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +19,6 @@ public class AccountOperation {
     private double amount;
     private String type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private BankAccount bankAccount;
 }
