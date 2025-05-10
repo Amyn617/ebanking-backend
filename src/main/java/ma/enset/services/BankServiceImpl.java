@@ -3,6 +3,7 @@ package ma.enset.service;
 import lombok.AllArgsConstructor;
 import ma.enset.dto.*;
 import ma.enset.entities.*;
+import ma.enset.enums.OperationType;
 import ma.enset.repositories.*;
 import org.springframework.stereotype.Service;
 
@@ -108,7 +109,7 @@ public class BankServiceImpl implements BankService {
         AccountOperation op = AccountOperation.builder()
                 .operationDate(new Date())
                 .amount(amount)
-                .type(type)
+                .type(OperationType.valueOf(type))
                 .bankAccount(account)
                 .build();
         accountOperationRepository.save(op);

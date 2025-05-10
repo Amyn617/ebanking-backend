@@ -1,6 +1,7 @@
 package ma.enset;
 
 import ma.enset.entities.*;
+import ma.enset.enums.AccountStatus;
 import ma.enset.enums.OperationType;
 import ma.enset.repositories.*;
 import org.springframework.boot.CommandLineRunner;
@@ -24,28 +25,50 @@ public class MainApplication {
                             BankAccountRepository bankAccountRepository,
                             AccountOperationRepository accountOperationRepository) {
         return args -> {
-            Customer c1 = customerRepository.save(Customer.builder().name("Amine").email("amine@mail.com").build());
-            Customer c2 = customerRepository.save(Customer.builder().name("Smail").email("smail@mail.com").build());
+            // Create customers
+            Customer c1 = new Customer();
+            c1.setName("Amine");
+            c1.setEmail("amine@mail.com");
+            c1 = customerRepository.save(c1);
+            
+            Customer c2 = new Customer();
+            c2.setName("Smail");
+            c2.setEmail("smail@mail.com");
+            c2 = customerRepository.save(c2);
 
-            BankAccount acc1 = bankAccountRepository.save(
-                    new CurrentAccount(UUID.randomUUID().toString(), 10000, new Date(), c1, null, 5000)
-            );
-            BankAccount acc2 = bankAccountRepository.save(
-                    new SavingAccount(UUID.randomUUID().toString(), 20000, new Date(), c2, null, 3.5)
-            );
+            // Create accounts
+            CurrentAccount acc1 = new CurrentAccount();
+            acc1.setId(UUID.randomUUID().toString());
+            acc1.setBalance(10000);
+            acc1.setCreatedAt(new Date());
+            acc1.setCustomer(c1);
+            acc1.setStatus(AccountStatus.ACTIVATED);
+            acc1.setOverdraft(5000);
+            bankAccountRepository.save(acc1);
+            
+            SavingAccount acc2 = new SavingAccount();
+            acc2.setId(UUID.randomUUID().toString());
+            acc2.setBalance(20000);
+            acc2.setCreatedAt(new Date());
+            acc2.setCustomer(c2);
+            acc2.setStatus(AccountStatus.ACTIVATED);
+            acc2.setInterestRate(3.5);
+            bankAccountRepository.save(acc2);
 
-            accountOperationRepository.save(AccountOperation.builder()
-                    .operationDate(new Date())
-                    .amount(1000)
-                    .type(OperationType.DEBIT)
-                    .bankAccount(acc1)
-                    .build());
-            accountOperationRepository.save(AccountOperation.builder()
-                    .operationDate(new Date())
-                    .amount(2000)
-                    .type(OperationType.CREDIT)
-                    .bankAccount(acc2)
-                    .build());
+            // Create operations
+            AccountOperation op1 = new AccountOperation();
+            op1.setOperationDate(new Date());
+            op1.setAmount(1000);
+            op1.setType(OperationType.DEBIT);
+            op1.setBankAccount(acc1);
+            accountOperationRepository.save(op1);
+            
+            AccountOperation op2 = new AccountOperation();
+            op2.setOperationDate(new Date());
+            op2.setAmount(2000);
+            op2.setType(OperationType.CREDIT);
+            op2.setBankAccount(acc2);
+            accountOperationRepository.save(op2);
         };
     }
 }

@@ -2,6 +2,7 @@ package ma.enset.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ma.enset.enums.AccountStatus;
 
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,7 @@ public abstract class BankAccount {
     private String id;
     private double balance;
     private Date createdAt;
+    
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
@@ -26,4 +28,14 @@ public abstract class BankAccount {
 
     @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY)
     private List<AccountOperation> accountOperations;
+    
+    // Constructor used by subclasses without status
+    public BankAccount(String id, double balance, Date createdAt, Customer customer, List<AccountOperation> accountOperations) {
+        this.id = id;
+        this.balance = balance;
+        this.createdAt = createdAt;
+        this.customer = customer;
+        this.accountOperations = accountOperations;
+        this.status = AccountStatus.CREATED;  // Default status
+    }
 }

@@ -1,4 +1,4 @@
-package ma.enset.service;
+package ma.enset.services;
 
 import ma.enset.dto.*;
 
