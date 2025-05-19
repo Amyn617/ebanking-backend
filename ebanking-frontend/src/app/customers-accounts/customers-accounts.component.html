@@ -1,0 +1,239 @@
+<div class="container mt-4 fade-in">
+  <div class="d-flex align-items-center mb-4">
+    <a routerLink="/customers" class="btn btn-outline-primary me-3">
+      <i class="bi bi-arrow-left me-1"></i> Back to Customers
+    </a>
+    <h2 class="page-title mb-0">
+      <i class="bi bi-person-vcard text-primary me-2"></i>
+      Customer Accounts
+    </h2>
+  </div>
+
+  <!-- Customer Info Card -->
+  <div class="card mb-4 shadow customer-card">
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center">
+            <div class="customer-avatar-large me-4">
+              <span>{{ getInitials(customer?.name || "Customer") }}</span>
+            </div>
+            <div>
+              <h4 class="mb-1 fw-bold">
+                {{ customer?.name || "Customer Name" }}
+              </h4>
+              <div class="text-muted customer-detail">
+                <i class="bi bi-envelope me-2"></i
+                >{{ customer?.email || "customer@example.com" }}
+              </div>
+              <div class="customer-detail mt-1">
+                <span
+                  class="badge rounded-pill mb-0"
+                  [ngClass]="getStatusBadgeClass(customer)"
+                >
+                  {{ customer?.status || "ACTIVE" }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+          <button class="btn btn-outline-primary me-2">
+            <i class="bi bi-pencil me-1"></i> Edit Customer
+          </button>
+          <button class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> New Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card account-summary-card h-100 border-primary">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0 fw-bold">Total Accounts</h5>
+            <div class="account-icon">
+              <i class="bi bi-wallet2"></i>
+            </div>
+          </div>
+          <h3 class="account-value">{{ accountsCount }}</h3>
+          <div class="account-info text-muted">
+            <span
+              ><i class="bi bi-arrow-up-circle-fill text-success me-1"></i>
+              {{ activeAccountsCount }} Active</span
+            >
+            <span class="ms-3"
+              ><i class="bi bi-clock-fill text-warning me-1"></i>
+              {{ pendingAccountsCount }} Pending</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card account-summary-card h-100 border-success">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0 fw-bold">Total Balance</h5>
+            <div class="account-icon bg-success-soft">
+              <i class="bi bi-cash-stack text-success"></i>
+            </div>
+          </div>
+          <h3 class="account-value">
+            {{ totalBalance | currency : "USD" : "symbol" : "1.2-2" }}
+          </h3>
+          <div class="account-info text-muted">
+            <span
+              ><i class="bi bi-graph-up-arrow text-success me-1"></i>
+              {{ positiveTrend }} from last month</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card account-summary-card h-100 border-warning">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0 fw-bold">Last Transaction</h5>
+            <div class="account-icon bg-warning-soft">
+              <i class="bi bi-arrow-left-right text-warning"></i>
+            </div>
+          </div>
+          <h3 class="account-value">
+            {{ lastTransactionAmount | currency : "USD" : "symbol" : "1.2-2" }}
+          </h3>
+          <div class="account-info text-muted">
+            <span
+              ><i class="bi bi-calendar-event me-1"></i>
+              {{ lastTransactionDate | date : "mediumDate" }}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accounts List -->
+  <div class="card shadow">
+    <div
+      class="card-header bg-white d-flex justify-content-between align-items-center py-3"
+    >
+      <h5 class="mb-0 fw-bold text-primary">
+        <i class="bi bi-credit-card me-2"></i> Customer Accounts
+      </h5>
+      <div class="account-filter">
+        <div class="btn-group">
+          <button class="btn btn-outline-primary active">All</button>
+          <button class="btn btn-outline-primary">Savings</button>
+          <button class="btn btn-outline-primary">Current</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover account-table mb-0">
+          <thead>
+            <tr>
+              <th>Account ID</th>
+              <th>Type</th>
+              <th>Balance</th>
+              <th>Created Date</th>
+              <th>Status</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let account of accounts">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="account-type-icon me-2"
+                    [ngClass]="
+                      account.type === 'SAVINGS'
+                        ? 'bg-success-soft'
+                        : 'bg-primary-soft'
+                    "
+                  >
+                    <i
+                      class="bi"
+                      [ngClass]="
+                        account.type === 'SAVINGS'
+                          ? 'bi-piggy-bank'
+                          : 'bi-credit-card'
+                      "
+                    ></i>
+                  </div>
+                  <span>{{ account.id }}</span>
+                </div>
+              </td>
+              <td>{{ account.type }}</td>
+              <td
+                class="fw-bold"
+                [ngClass]="{
+                  'text-success': account.balance > 0,
+                  'text-danger': account.balance < 0
+                }"
+              >
+                {{ account.balance | currency : "USD" : "symbol" : "1.2-2" }}
+              </td>
+              <td>{{ account.creationDate | date : "mediumDate" }}</td>
+              <td>
+                <span
+                  class="badge rounded-pill"
+                  [ngClass]="getAccountBadgeClass(account)"
+                >
+                  {{ account.status }}
+                </span>
+              </td>
+              <td>
+                <div class="d-flex justify-content-center gap-2">
+                  <button
+                    class="btn btn-sm btn-outline-primary"
+                    title="View Transactions"
+                  >
+                    <i class="bi bi-list-ul"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-success"
+                    title="Deposit"
+                  >
+                    <i class="bi bi-plus-circle"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-warning"
+                    title="Withdraw"
+                  >
+                    <i class="bi bi-dash-circle"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-info" title="Transfer">
+                    <i class="bi bi-arrow-left-right"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <!-- If no accounts -->
+            <tr *ngIf="accounts?.length === 0">
+              <td colspan="6" class="text-center py-5">
+                <div class="empty-state-icon">
+                  <i class="bi bi-credit-card text-muted"></i>
+                </div>
+                <h5 class="mt-3 text-muted">
+                  No accounts found for this customer
+                </h5>
+                <button class="btn btn-primary mt-2">
+                  <i class="bi bi-plus-circle me-2"></i>Create New Account
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

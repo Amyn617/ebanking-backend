@@ -1,0 +1,174 @@
+<div class="container mt-4 fade-in">
+  <div class="row mb-4 align-items-center">
+    <div class="col">
+      <h2 class="page-title mb-0">
+        <i class="bi bi-people-fill text-primary me-2"></i>
+        Customers Management
+      </h2>
+      <p class="text-muted">Manage your banking customers in one place</p>
+    </div>
+    <div class="col-auto">
+      <a href="/new-customer" class="btn btn-primary btn-lg shadow-sm">
+        <i class="bi bi-person-plus me-1"></i> New Customer
+      </a>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card stat-card h-100">
+        <div class="card-body d-flex align-items-center">
+          <div class="stat-card-icon me-3">
+            <i class="bi bi-people"></i>
+          </div>
+          <div>
+            <p class="stat-card-number">{{ totalCustomers }}</p>
+            <p class="stat-card-title mb-0">Total Customers</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow">
+    <div
+      class="card-header bg-white d-flex justify-content-between align-items-center py-3"
+    >
+      <h5 class="mb-0 fw-bold text-primary">Customer List</h5>
+      <div *ngIf="searchFormGroup" class="col-md-6">
+        <form
+          [formGroup]="searchFormGroup"
+          (ngSubmit)="handleSearchCustomers()"
+        >
+          <div class="input-group shadow-sm">
+            <input
+              type="text"
+              formControlName="keyword"
+              class="form-control"
+              placeholder="Search customers by name..."
+            />
+            <button class="btn btn-primary" type="submit">
+              <i class="bi bi-search me-1"></i> Search
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="resetSearch()"
+            >
+              <i class="bi bi-x-circle me-1"></i> Clear
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <ng-container
+        *ngIf="customers | async as listCustomers; else failureOrLoading"
+      >
+        <div
+          *ngIf="listCustomers.length > 0; else noCustomers"
+          class="table-responsive"
+        >
+          <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of listCustomers" class="align-middle">
+                <td>
+                  <span class="badge bg-light text-dark rounded-pill">{{
+                    c.id
+                  }}</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="customer-avatar me-3">
+                      <span>{{ getInitials(c.name) }}</span>
+                    </div>
+                    <div class="fw-medium">{{ c.name }}</div>
+                  </div>
+                </td>
+                <td>
+                  <a href="mailto:{{ c.email }}" class="text-decoration-none">
+                    <i class="bi bi-envelope text-muted me-1"></i>{{ c.email }}
+                  </a>
+                </td>
+                <td>
+                  <span
+                    class="badge rounded-pill"
+                    [ngClass]="getStatusBadgeClass(c)"
+                  >
+                    {{ c.status || "ACTIVE" }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex justify-content-center gap-2">
+                    <a
+                      href="/customers-accounts/{{ c.id }}"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-bank me-1"></i> Accounts
+                    </a>
+                    <button
+                      (click)="handleEditCustomer(c)"
+                      class="btn btn-sm btn-outline-warning"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      (click)="handleDeleteCustomer(c)"
+                      class="btn btn-sm btn-outline-danger"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noCustomers>
+          <div class="text-center py-5">
+            <div class="empty-state-icon">
+              <i class="bi bi-people text-muted"></i>
+            </div>
+            <h4 class="mt-3 text-muted">No customers found</h4>
+            <p class="text-muted">
+              Try changing your search criteria or add a new customer.
+            </p>
+            <button
+              class="btn btn-outline-primary mt-2"
+              (click)="resetSearch()"
+            >
+              <i class="bi bi-arrow-repeat me-1"></i> Reset Search
+            </button>
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <ng-template #failureOrLoading>
+        <ng-container *ngIf="errorMessage; else loading">
+          <div class="alert alert-danger m-3">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ errorMessage }}
+          </div>
+        </ng-container>
+        <ng-template #loading>
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Loading customers...</p>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+</div>

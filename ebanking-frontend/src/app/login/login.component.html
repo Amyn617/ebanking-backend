@@ -1,0 +1,127 @@
+<div class="mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-11 col-lg-9 col-xl-7">
+      <div class="card login-card shadow">
+        <div class="card-header bg-primary text-white py-3">
+          <h4 class="mb-0 text-center fw-bold">Welcome to Digital Banking</h4>
+        </div>
+        <div class="card-body p-4">
+          <div class="text-center mb-4">
+            <div class="brand-icon-large mx-auto mb-3">
+              <i class="bi bi-bank fs-1 text-primary"></i>
+            </div>
+            <p class="text-muted">Please sign in to your account</p>
+          </div>
+          <div class="alert alert-danger" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+          <form
+            [formGroup]="formLogin"
+            (ngSubmit)="handleLogin()"
+            class="login-form"
+          >
+            <div class="mb-4">
+              <label class="form-label fw-medium">Username</label>
+              <div class="input-group input-group-lg shadow-sm">
+                <span class="input-group-text bg-white"
+                  ><i class="bi bi-person text-primary"></i
+                ></span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="username"
+                  placeholder="Enter your username"
+                />
+              </div>
+              <div
+                class="text-danger mt-2"
+                *ngIf="
+                  formLogin.get('username')?.errors &&
+                  formLogin.get('username')?.touched
+                "
+              >
+                <small *ngIf="formLogin.get('username')?.errors?.['required']">
+                  <i class="bi bi-exclamation-circle me-1"></i>Username is
+                  required
+                </small>
+              </div>
+            </div>
+            <div class="mb-5">
+              <label class="form-label fw-medium">Password</label>
+              <div class="input-group input-group-lg shadow-sm">
+                <span class="input-group-text bg-white"
+                  ><i class="bi bi-lock text-primary"></i
+                ></span>
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary border"
+                  (click)="togglePassword()"
+                >
+                  <i
+                    class="bi"
+                    [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+                  ></i>
+                </button>
+              </div>
+              <div
+                class="text-danger mt-2"
+                *ngIf="
+                  formLogin.get('password')?.errors &&
+                  formLogin.get('password')?.touched
+                "
+              >
+                <small *ngIf="formLogin.get('password')?.errors?.['required']">
+                  <i class="bi bi-exclamation-circle me-1"></i>Password is
+                  required
+                </small>
+              </div>
+            </div>
+            <div class="d-grid gap-2">
+              <button
+                [disabled]="formLogin.invalid || isLoading"
+                class="btn btn-primary btn-lg shadow-sm"
+                type="submit"
+              >
+                <span
+                  *ngIf="isLoading"
+                  class="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="loginWithDemoCredentials()"
+              >
+                <i class="bi bi-person-badge me-2"></i>Login with Demo Account
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer bg-light text-center p-3">
+          <small class="text-muted">Digital Banking System &copy; 2025</small>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <div class="d-flex justify-content-center align-items-center gap-3">
+          <div class="security-badge">
+            <i class="bi bi-shield-lock"></i>
+            <span>Secure Login</span>
+          </div>
+          <div class="security-badge">
+            <i class="bi bi-pin-angle"></i>
+            <span>Privacy Protected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

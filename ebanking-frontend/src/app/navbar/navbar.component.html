@@ -1,0 +1,133 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <div
+        class="brand-icon me-2 d-flex align-items-center justify-content-center"
+      >
+        <i class="bi bi-bank fs-4"></i>
+      </div>
+      <div>
+        <span class="fw-bold">Digital</span>
+        <span class="fw-light">Banking</span>
+      </div>
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul
+        class="navbar-nav me-auto mb-2 mb-lg-0"
+        *ngIf="authService.isAuthenticated"
+      >
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/customers" routerLinkActive="active">
+            <i class="bi bi-people me-1"></i> Customers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/accounts" routerLinkActive="active">
+            <i class="bi bi-wallet2 me-1"></i> Accounts
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-gear me-1"></i> Management
+          </a>
+          <ul class="dropdown-menu shadow-sm" aria-labelledby="navbarDropdown">
+            <li>
+              <a class="dropdown-item" routerLink="/customers">
+                <i class="bi bi-search me-2"></i> Search Customers
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/new-customer">
+                <i class="bi bi-person-plus me-2"></i> New Customer
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/accounts">
+                <i class="bi bi-bank me-2"></i> Manage Accounts
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- User is not authenticated -->
+      <ul class="navbar-nav ms-auto" *ngIf="!authService.isAuthenticated">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/login" routerLinkActive="active">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+          </a>
+        </li>
+      </ul>
+
+      <!-- User is authenticated -->
+      <ul class="navbar-nav ms-auto" *ngIf="authService.isAuthenticated">
+        <li class="nav-item">
+          <a
+            class="nav-link btn btn-outline-light btn-logout"
+            href="#"
+            (click)="logout($event)"
+          >
+            <i class="bi bi-box-arrow-right me-1"></i> Logout
+          </a>
+        </li>
+        <li class="nav-item dropdown ms-2">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="userDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-person-circle me-1"></i>
+            {{ authService.username || "User" }}
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end shadow-sm"
+            aria-labelledby="userDropdown"
+          >
+            <li>
+              <a class="dropdown-item" href="#">
+                <i class="bi bi-person me-2"></i> Profile
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <i class="bi bi-gear me-2"></i> Settings
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="#" (click)="logout($event)">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,114 @@
+.page-title {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.customer-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(37, 99, 235, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.btn-group .btn {
+  transition: all 0.2s ease;
+  margin: 0 1px;
+}
+
+.btn-sm {
+  transition: all 0.3s ease;
+}
+
+.btn-sm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 0.35em 0.65em;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(37, 99, 235, 0.05) !important;
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(37, 99, 235, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.empty-state-icon i {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+}
+
+.stat-card {
+  transition: all 0.3s ease;
+  border-left: 5px solid var(--primary-color);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Status badge colors */
+.badge-active {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.badge-inactive {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.badge-pending {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+@media (max-width: 767px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .card-header > div {
+    margin-top: 1rem;
+    width: 100%;
+  }
+}
+
+.input-group .form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  z-index: 3;
+}
