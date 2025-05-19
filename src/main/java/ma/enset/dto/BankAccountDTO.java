@@ -8,8 +8,8 @@ public class BankAccountDTO {
     private String id;
     private double balance;
     private Date createdAt;
-    private Long customerId;
+    private CustomerDTO customerDTO;
     private String type; // "CURRENT" ou "SAVING"
-    private Double overdraft; // pour CurrentAccount
-    private Double interestRate; // pour SavingAccount
+    private double overDraft; // pour CurrentAccount
+    private double interestRate; // pour SavingAccount
 }

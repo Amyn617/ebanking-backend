@@ -20,4 +20,16 @@ public class CurrentAccount extends BankAccount {
         super(id, balance, createdAt, customer, accountOperations);
         this.overdraft = overdraft;
     }
+    
+    public void setOverDraft(double overdraft) {
+        this.overdraft = overdraft;
+    }
+
+    public double getOverdraft() {
+        return overdraft;
+    }
+
+    public void setOverdraft(double overdraft) {
+        this.overdraft = overdraft;
+    }
 }
