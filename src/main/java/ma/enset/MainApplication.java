@@ -1,74 +1,113 @@
 package ma.enset;
 
+import ma.enset.dto.*;
 import ma.enset.entities.*;
 import ma.enset.enums.AccountStatus;
 import ma.enset.enums.OperationType;
-import ma.enset.repositories.*;
+import ma.enset.exceptions.BalanceNotSufficientException;
+import ma.enset.exceptions.BankAccountNotFoundException;
+import ma.enset.exceptions.CustomerNotFoundException;
+import ma.enset.repositories.AccountOperationRepository;
+import ma.enset.repositories.BankAccountRepository;
+import ma.enset.repositories.CustomerRepository;
+import ma.enset.service.BankAccountService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @SpringBootApplication
 public class MainApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class, args);
     }
 
     @Bean
-    @Transactional
-    CommandLineRunner start(CustomerRepository customerRepository,
-                            BankAccountRepository bankAccountRepository,
-                            AccountOperationRepository accountOperationRepository) {
+    CommandLineRunner commandLineRunner(BankAccountService bankAccountService) {
         return args -> {
-            // Create customers
-            Customer c1 = new Customer();
-            c1.setName("Amine");
-            c1.setEmail("amine@mail.com");
-            c1 = customerRepository.save(c1);
-            
-            Customer c2 = new Customer();
-            c2.setName("Smail");
-            c2.setEmail("smail@mail.com");
-            c2 = customerRepository.save(c2);
-
-            // Create accounts
-            CurrentAccount acc1 = new CurrentAccount();
-            acc1.setId(UUID.randomUUID().toString());
-            acc1.setBalance(10000);
-            acc1.setCreatedAt(new Date());
-            acc1.setCustomer(c1);
-            acc1.setStatus(AccountStatus.ACTIVATED);
-            acc1.setOverdraft(5000);
-            bankAccountRepository.save(acc1);
-            
-            SavingAccount acc2 = new SavingAccount();
-            acc2.setId(UUID.randomUUID().toString());
-            acc2.setBalance(20000);
-            acc2.setCreatedAt(new Date());
-            acc2.setCustomer(c2);
-            acc2.setStatus(AccountStatus.ACTIVATED);
-            acc2.setInterestRate(3.5);
-            bankAccountRepository.save(acc2);
-
-            // Create operations
-            AccountOperation op1 = new AccountOperation();
-            op1.setOperationDate(new Date());
-            op1.setAmount(1000);
-            op1.setType(OperationType.DEBIT);
-            op1.setBankAccount(acc1);
-            accountOperationRepository.save(op1);
-            
-            AccountOperation op2 = new AccountOperation();
-            op2.setOperationDate(new Date());
-            op2.setAmount(2000);
-            op2.setType(OperationType.CREDIT);
-            op2.setBankAccount(acc2);
-            accountOperationRepository.save(op2);
+            // Initialize sample customers with realistic data
+            initializeCustomers(bankAccountService);
+            // Create accounts for each customer
+            createAccountsAndTransactions(bankAccountService);
         };
+    }
+
+    private void initializeCustomers(BankAccountService bankAccountService) {
+        System.out.println("Initializing customers...");
+        Stream.of(
+                new String[]{"Mohammed El Alaoui", "mohammed.alaoui@gmail.com"},
+                new String[]{"Zakaria Naji", "zakaria.naji@gmail.com"},
+                new String[]{"Yasser Benhima", "yasser.benhima@gmail.com"},
+                new String[]{"Ilyas Tahiri", "ilyas.tahiri@gmail.com"}
+        ).forEach(data -> {
+            CustomerDTO customerDTO = new CustomerDTO();
+            customerDTO.setName(data[0]);
+            customerDTO.setEmail(data[1]);
+            bankAccountService.saveCustomer(customerDTO);
+            System.out.println("Created customer: " + data[0]);
+        });
+    }
+
+    private void createAccountsAndTransactions(BankAccountService bankAccountService) {
+        System.out.println("Creating accounts and generating transactions...");
+        bankAccountService.listCustomers().forEach(customer -> {
+            try {
+                // Create a current account with 50,000 initial balance and 10,000 overdraft
+                bankAccountService.saveCurrentBankAccount(50000, 10000, customer.getId());
+                System.out.println("Created current account for: " + customer.getName());
+
+                // Create a saving account with 25,000 initial balance and 4.5% interest rate
+                bankAccountService.saveSavingBankAccount(25000, 4.5, customer.getId());
+                System.out.println("Created saving account for: " + customer.getName());
+
+                // Generate sample transactions
+                generateSampleTransactions(bankAccountService);
+
+            } catch (CustomerNotFoundException e) {
+                System.err.println("Error: Customer not found - " + e.getMessage());
+            } catch (BankAccountNotFoundException | BalanceNotSufficientException e) {
+                System.err.println("Error in transaction processing: " + e.getMessage());
+            }
+        });
+    }
+
+    private void generateSampleTransactions(BankAccountService bankAccountService) throws BankAccountNotFoundException, BalanceNotSufficientException {
+        List<BankAccountDTO> bankAccounts = bankAccountService.bankAccountList();
+
+        // Generate realistic transactions for each account
+        for (BankAccountDTO bankAccountDTO : bankAccounts) {
+            String accountId = bankAccountDTO.getId();
+
+            // Deposit transactions
+            bankAccountService.credit(accountId, 5000, "Salary deposit");
+            bankAccountService.credit(accountId, 2500, "Freelance payment");
+            bankAccountService.credit(accountId, 1000, "Tax refund");
+
+            // Withdrawal transactions
+            bankAccountService.debit(accountId, 1200, "Rent payment");
+            bankAccountService.debit(accountId, 500, "Grocery shopping");
+            bankAccountService.debit(accountId, 300, "Utility bills");
+
+            // Create a few random transactions
+            for (int i = 0; i < 5; i++) {
+                double amount = 100 + Math.random() * 900; // Random amount between 100 and 1000
+                bankAccountService.debit(accountId, amount, "Shopping expense #" + (i+1));
+            }
+        }
+
+        // Create some transfers between accounts if we have at least 2 accounts
+        if (bankAccounts.size() >= 2) {
+            bankAccountService.transfer(
+                    bankAccounts.get(0).getId(),
+                    bankAccounts.get(1).getId(),
+                    1000.0
+            );
+        }
     }
 }

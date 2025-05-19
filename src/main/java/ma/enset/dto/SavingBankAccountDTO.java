@@ -2,28 +2,17 @@ package ma.enset.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import ma.enset.enums.AccountStatus;
+
 import java.util.Date;
 
-@Data
 @EqualsAndHashCode(callSuper = true)
+@Data
 public class SavingBankAccountDTO extends BankAccountDTO {
+    private String id;
+    private double balance;
+    private Date createDate;
+    private AccountStatus status;
+    private CustomerDTO customerDTO;
     private double interestRate;
-    
-    // Constructor to initialize all fields from parent class plus interestRate
-    public SavingBankAccountDTO(String id, double balance, Date createdAt, 
-                               CustomerDTO customerDTO, double interestRate) {
-        super();
-        this.setId(id);
-        this.setBalance(balance);
-        this.setCreatedAt(createdAt);
-        this.setCustomerDTO(customerDTO);
-        this.setType("SAVING");
-        this.setInterestRate(interestRate);
-    }
-    
-    // Default constructor for serialization/deserialization
-    public SavingBankAccountDTO() {
-        super();
-        this.setType("SAVING");
-    }
 }

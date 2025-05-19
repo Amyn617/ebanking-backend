@@ -2,34 +2,15 @@ package ma.enset.entities;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
-
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@DiscriminatorValue("CURRENT")
+@DiscriminatorValue("CA")
+@Data @NoArgsConstructor @AllArgsConstructor
 public class CurrentAccount extends BankAccount {
-    private double overdraft;
-    
-    public CurrentAccount(String id, double balance, Date createdAt, Customer customer, 
-                         List<AccountOperation> accountOperations, double overdraft) {
-        super(id, balance, createdAt, customer, accountOperations);
-        this.overdraft = overdraft;
-    }
-    
-    public void setOverDraft(double overdraft) {
-        this.overdraft = overdraft;
-    }
-
-    public double getOverdraft() {
-        return overdraft;
-    }
-
-    public void setOverdraft(double overdraft) {
-        this.overdraft = overdraft;
-    }
+    private double overDraft;
 }

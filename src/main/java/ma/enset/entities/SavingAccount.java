@@ -4,20 +4,10 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
 
-import java.util.Date;
-import java.util.List;
-
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@DiscriminatorValue("SAVING")
+@Data @NoArgsConstructor @AllArgsConstructor
+@DiscriminatorValue("SA")
 public class SavingAccount extends BankAccount {
-    private double interestRate;
-    
-    public SavingAccount(String id, double balance, Date createdAt, Customer customer, 
-                         List<AccountOperation> accountOperations, double interestRate) {
-        super(id, balance, createdAt, customer, accountOperations);
-        this.interestRate = interestRate;
-    }
+    private double interestRate ;
 }
