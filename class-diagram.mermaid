@@ -1,0 +1,55 @@
+classDiagram
+    class Customer {
+        -Long id
+        -String name
+        -String email
+        +List~BankAccount~ bankAccounts
+    }
+
+    class BankAccount {
+        <<abstract>>
+        -String id
+        -double balance
+        -Date createDate
+        -AccountStatus status
+        -Customer customer
+        +List~AccountOperation~ accountOperations
+    }
+
+    class CurrentAccount {
+        -double overDraft
+    }
+
+    class SavingAccount {
+        -double interestRate
+    }
+
+    class AccountOperation {
+        -Long id
+        -Date operationDate
+        -double amount
+        -OperationType type
+        -String description
+        -BankAccount bankAccount
+    }
+
+    %% Entity Relations
+    Customer "1" -- "0..*" BankAccount : owns
+    BankAccount "1" -- "0..*" AccountOperation : contains
+    
+    BankAccount <|-- CurrentAccount
+    BankAccount <|-- SavingAccount
+
+    %% Enumerations
+    class AccountStatus {
+        <<enumeration>>
+        ACTIVATED
+        CREATED
+        SUSPENDED
+    }
+
+    class OperationType {
+        <<enumeration>>
+        DEBIT
+        CREDIT
+    }
