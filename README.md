@@ -191,7 +191,7 @@ GET    /customers/{id}               # Récupère un client par ID
 GET    /customers/search?keyword=    # Recherche de clients
 POST   /customers                   # Crée un nouveau client
 PUT    /customers/{id}              # Met à jour un client
-DELETE /customers/{id}              # Supprime un client
+DELETE /customers/{id}              # Supprime un client (retourne 200 OK ou 404/500)
 ```
 
 ### 🏦 Gestion des comptes
@@ -223,6 +223,32 @@ POST /customers
   "name": "Jean Dupont",
   "email": "jean.dupont@email.com"
 }
+```
+
+**Supprimer un client** :
+
+```bash
+DELETE /customers/1
+```
+
+**Réponse (succès)** :
+
+```
+HTTP 200 OK
+"Customer deleted successfully"
+```
+
+**Réponse (erreur - client non trouvé)** :
+
+```
+HTTP 404 Not Found
+```
+
+**Réponse (erreur - client a des comptes actifs)** :
+
+```
+HTTP 500 Internal Server Error
+"Error deleting customer"
 ```
 
 ## 🔒 Sécurité

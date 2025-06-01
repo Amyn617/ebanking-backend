@@ -1,7 +1,6 @@
 package ma.enset.entities;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -9,5 +8,5 @@ import lombok.*;
 @Data @NoArgsConstructor @AllArgsConstructor
 @DiscriminatorValue("SA")
 public class SavingAccount extends BankAccount {
-    private double interestRate ;
+    private double interestRate;
 }

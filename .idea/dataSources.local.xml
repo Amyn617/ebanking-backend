@@ -6,5 +6,10 @@
       <user-name>root</user-name>
       <schema-mapping />
     </data-source>
+    <data-source name="digital-banking@localhost" uuid="1d00c537-67f8-43f4-b4ac-d012402d67ca">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
+      <user-name>root</user-name>
+      <schema-mapping />
+    </data-source>
   </component>
 </project>

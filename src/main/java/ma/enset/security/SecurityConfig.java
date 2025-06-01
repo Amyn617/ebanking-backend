@@ -1,6 +1,5 @@
 
 package ma.enset.security;
-
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
