@@ -44,14 +44,23 @@ public class MainApplication {
                 new String[]{"Mohammed El Alaoui", "mohammed.alaoui@gmail.com"},
                 new String[]{"Zakaria Naji", "zakaria.naji@gmail.com"},
                 new String[]{"Yasser Benhima", "yasser.benhima@gmail.com"},
-                new String[]{"Ilyas Tahiri", "ilyas.tahiri@gmail.com"}
+                new String[]{"Ilyas Tahiri", "ilyas.tahiri@gmail.com"},
+                new String[]{"Fatima Zahra", "fatima.zahra@gmail.com"},
+                new String[]{"Ahmed Benali", "ahmed.benali@gmail.com"}
         ).forEach(data -> {
             CustomerDTO customerDTO = new CustomerDTO();
             customerDTO.setName(data[0]);
             customerDTO.setEmail(data[1]);
-            bankAccountService.saveCustomer(customerDTO);
-            System.out.println("Created customer: " + data[0]);
+            try {
+                bankAccountService.saveCustomer(customerDTO);
+                System.out.println("Created customer: " + data[0]);
+            } catch (Exception e) {
+                System.err.println("Error creating customer " + data[0] + ": " + e.getMessage());
+            }
         });
+        
+        // Log total customers created
+        System.out.println("Total customers in database: " + bankAccountService.listCustomers().size());
     }
 
     private void createAccountsAndTransactions(BankAccountService bankAccountService) {
