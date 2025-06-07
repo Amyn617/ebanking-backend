@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.enset.dto.*;
 import ma.enset.entities.*;
-import ma.enset.enums.AccountStatus;
 import ma.enset.enums.OperationType;
 import ma.enset.exceptions.*;
 import ma.enset.mappers.BankAccountMapperImpl;

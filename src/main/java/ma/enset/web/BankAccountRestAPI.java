@@ -3,6 +3,7 @@ package ma.enset.web;
 import ma.enset.dto.*;
 import ma.enset.exceptions.BalanceNotSufficientException;
 import ma.enset.exceptions.BankAccountNotFoundException;
+import ma.enset.exceptions.CustomerNotFoundException;
 import ma.enset.service.BankAccountService;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,12 +47,27 @@ public class BankAccountRestAPI {
     public CreditDTO credit(@RequestBody CreditDTO creditDTO) throws BankAccountNotFoundException {
         this.bankAccountService.credit(creditDTO.getAccountId(),creditDTO.getAmount(),creditDTO.getDescription());
         return creditDTO;
-    }
-    @PostMapping("/accounts/transfer")
+    }    @PostMapping("/accounts/transfer")
     public void transfer(@RequestBody TransferRequestDTO transferRequestDTO) throws BankAccountNotFoundException, BalanceNotSufficientException {
         this.bankAccountService.transfer(
                 transferRequestDTO.getAccountSource(),
                 transferRequestDTO.getAccountDestination(),
                 transferRequestDTO.getAmount());
+    }
+
+    @PostMapping("/accounts/current")
+    public CurrentBankAccountDTO saveCurrentAccount(@RequestBody CreateCurrentAccountRequest request) throws CustomerNotFoundException {
+        return bankAccountService.saveCurrentBankAccount(
+                request.getInitialBalance(),
+                request.getOverDraft(),
+                request.getCustomerId());
+    }
+
+    @PostMapping("/accounts/saving")
+    public SavingBankAccountDTO saveSavingAccount(@RequestBody CreateSavingAccountRequest request) throws CustomerNotFoundException {
+        return bankAccountService.saveSavingBankAccount(
+                request.getInitialBalance(),
+                request.getInterestRate(),
+                request.getCustomerId());
     }
 }
