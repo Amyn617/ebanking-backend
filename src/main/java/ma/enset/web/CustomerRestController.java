@@ -3,7 +3,6 @@ package ma.enset.web;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.enset.dto.CustomerDTO;
-import ma.enset.entities.Customer;
 import ma.enset.exceptions.CustomerNotFoundException;
 import ma.enset.service.BankAccountService;
 import org.springframework.web.bind.annotation.*;
