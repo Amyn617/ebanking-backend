@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody; // Added RequestBody
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,13 +25,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/auth")
 public class SecurityController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtEncoder jwtEncoder;
+    private final AuthenticationManager authenticationManager; // Made final
+    private final JwtEncoder jwtEncoder; // Made final
 
-    public SecurityController(AuthenticationManager authenticationManager) {
+    // Updated constructor for dependency injection
+    public SecurityController(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder) {
         this.authenticationManager = authenticationManager;
+        this.jwtEncoder = jwtEncoder;
     }
 
     @GetMapping("/profile")
@@ -39,16 +40,17 @@ public class SecurityController {
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(String username, String password) {
+    // Changed to accept a Map representing the JSON body
+    public Map<String, String> login(@RequestBody Map<String, String> credentials) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
+                new UsernamePasswordAuthenticationToken(credentials.get("username"), credentials.get("password"))
         );
         Instant instant = Instant.now();
         String scope = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" "));
         JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
                 .issuedAt(instant)
                 .expiresAt(instant.plus(10, ChronoUnit.MINUTES))
-                .subject(username)
+                .subject(credentials.get("username"))
                 .claim("scope", scope)
                 .build();
         JwtEncoderParameters jwtEncoderParameters =
@@ -57,7 +59,7 @@ public class SecurityController {
                         jwtClaimsSet
                 );
         String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
-        return Map.of("access_token", jwt);
-
+        // Changed key to "access-token" to match frontend expectation
+        return Map.of("access-token", jwt);
     }
 }

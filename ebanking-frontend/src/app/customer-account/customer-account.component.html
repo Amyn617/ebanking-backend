@@ -1,0 +1,170 @@
+<div class="container">
+  <!-- En-tête avec navigation -->
+  <div class="page-header">
+    <div class="flex items-center gap-4 mb-4">
+      <app-button variant="outline" routerLink="/customers">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Retour aux clients
+      </app-button>
+    </div>
+    <h1 class="text-3xl font-bold">Détails du client</h1>
+    <p class="text-secondary">Informations et comptes bancaires</p>
+  </div>
+
+  <!-- Messages d'erreur -->
+  <app-alert
+    *ngIf="errorMessage"
+    type="error"
+    [message]="errorMessage"
+    [dismissible]="true"
+    (dismissed)="clearError()"
+  ></app-alert>
+
+  <!-- Indicateur de chargement -->
+  <app-card *ngIf="isLoading">
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Chargement des informations du client...</p>
+    </div>
+  </app-card>
+
+  <!-- Informations du client -->
+  <app-card *ngIf="customer && !isLoading">
+    <div slot="header">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Informations personnelles</h2>
+        <div class="customer-badge">
+          <span class="badge badge-info">Client #{{ customer.id }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="customer-info-grid">
+      <div class="customer-info-item">
+        <label>Nom complet</label>
+        <span class="font-medium">{{ customer.name }}</span>
+      </div>
+      <div class="customer-info-item">
+        <label>Adresse email</label>
+        <span class="text-secondary">{{ customer.email }}</span>
+      </div>
+      <div class="customer-info-item">
+        <label>Identifiant client</label>
+        <span class="font-medium">#{{ customer.id }}</span>
+      </div>
+      <div class="customer-info-item">
+        <label>Date d'inscription</label>
+        <span class="text-secondary">{{ getRegistrationDate() }}</span>
+      </div>
+    </div>
+  </app-card>
+
+  <!-- Comptes bancaires du client -->
+  <app-card *ngIf="customer && !isLoading">
+    <div slot="header">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Comptes bancaires</h2>
+        <div class="accounts-summary">
+          <span class="text-sm text-secondary">
+            {{ mockAccounts.length }} compte(s)
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="accounts-grid">
+      <div *ngFor="let account of mockAccounts" class="account-card">
+        <div class="account-header">
+          <div class="account-type">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              [class]="getAccountIconClass(account.type)"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+              />
+              <path d="M8 1v6h8V1" />
+            </svg>
+            <span class="account-type-label">{{
+              getAccountTypeLabel(account.type)
+            }}</span>
+          </div>
+          <span class="badge" [class]="getAccountStatusBadge(account.status)">
+            {{ getAccountStatusLabel(account.status) }}
+          </span>
+        </div>
+
+        <div class="account-details">
+          <div class="account-id">
+            <label>Numéro de compte</label>
+            <span class="font-medium">{{ account.id }}</span>
+          </div>
+          <div class="account-balance">
+            <label>Solde</label>
+            <span class="balance" [class]="getBalanceClass(account.balance)">
+              {{
+                account.balance | currency : "EUR" : "symbol" : "1.2-2" : "fr"
+              }}
+            </span>
+          </div>
+          <div class="account-created">
+            <label>Créé le</label>
+            <span class="text-secondary">{{
+              account.createdDate | date : "dd/MM/yyyy" : "fr"
+            }}</span>
+          </div>
+        </div>
+
+        <div class="account-actions">
+          <app-button
+            variant="outline"
+            size="sm"
+            [routerLink]="['/accounts']"
+            [queryParams]="{ accountId: account.id }"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+            Voir détails
+          </app-button>
+          <app-button
+            *ngIf="isAdmin"
+            variant="primary"
+            size="sm"
+            routerLink="/operations"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+            </svg>
+            Opération
+          </app-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message si aucun compte -->
+    <div *ngIf="mockAccounts.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+          />
+          <path d="M8 1v6h8V1" />
+        </svg>
+      </div>
+      <h3>Aucun compte bancaire</h3>
+      <p class="text-secondary">Ce client n'a pas encore de compte bancaire</p>
+      <app-button *ngIf="isAdmin" variant="primary" routerLink="/operations">
+        Créer un compte
+      </app-button>
+    </div>
+  </app-card>
+</div>

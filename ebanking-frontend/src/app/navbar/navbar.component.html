@@ -1,0 +1,116 @@
+<nav class="navbar">
+  <div class="container">
+    <div class="flex items-center justify-between w-full">
+      <!-- Logo et nom -->
+      <a class="navbar-brand" routerLink="/">
+        <div class="flex items-center gap-4">
+          <div class="logo-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+              />
+            </svg>
+          </div>
+          <span class="font-bold text-lg">Banque Numérique</span>
+        </div>
+      </a>
+
+      <!-- Navigation principale et recherche -->
+      <div class="navbar-center" *ngIf="isAuthenticated">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/dashboard"
+              routerLinkActive="active"
+            >
+              Tableau de bord
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/customers"
+              routerLinkActive="active"
+            >
+              Clients
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/accounts"
+              routerLinkActive="active"
+            >
+              Comptes
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="isAdmin">
+            <a
+              class="nav-link"
+              routerLink="/operations"
+              routerLinkActive="active"
+            >
+              Opérations
+            </a>
+          </li>
+        </ul>
+
+        <!-- Recherche globale -->
+        <div class="navbar-search">
+          <app-global-search></app-global-search>
+        </div>
+      </div>
+
+      <!-- Actions utilisateur -->
+      <div class="flex items-center gap-4">
+        <!-- Bouton de changement de thème -->
+        <button
+          class="btn btn-secondary btn-sm"
+          (click)="toggleTheme()"
+          title="Changer le thème"
+        >
+          <svg
+            *ngIf="currentTheme === 'dark'"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
+            />
+          </svg>
+          <svg
+            *ngIf="currentTheme === 'light'"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+            />
+          </svg>
+        </button>
+
+        <!-- Menu utilisateur -->
+        <div *ngIf="isAuthenticated" class="flex items-center gap-4">
+          <div class="user-info">
+            <span class="text-sm text-secondary">
+              {{ isAdmin ? "Administrateur" : "Utilisateur" }}
+            </span>
+          </div>
+          <button class="btn btn-outline btn-sm" (click)="handleLogout()">
+            Déconnexion
+          </button>
+        </div>
+
+        <!-- Bouton de connexion -->
+        <div *ngIf="!isAuthenticated">
+          <a class="btn btn-primary" routerLink="/login"> Connexion </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

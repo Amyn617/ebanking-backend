@@ -1,0 +1,138 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="text-3xl font-bold">Ajouter un client</h1>
+    <p class="text-secondary">Créez un nouveau profil client</p>
+  </div>
+
+  <!-- Messages d'erreur/succès -->
+  <app-alert
+    *ngIf="errorMessage"
+    type="error"
+    [message]="errorMessage"
+    [dismissible]="true"
+    (dismissed)="clearError()"
+  ></app-alert>
+
+  <app-alert
+    *ngIf="successMessage"
+    type="success"
+    [message]="successMessage"
+    [dismissible]="true"
+    (dismissed)="clearSuccess()"
+  ></app-alert>
+
+  <!-- Formulaire d'ajout de client -->
+  <app-card>
+    <div slot="header">
+      <h2 class="text-xl font-semibold">Informations du client</h2>
+    </div>
+
+    <form
+      [formGroup]="newCustomerFormGroup"
+      (ngSubmit)="handleAddCustomer()"
+      class="customer-form"
+    >
+      <div class="form-grid">
+        <app-input
+          label="Nom complet"
+          type="text"
+          placeholder="Entrez le nom du client"
+          formControlName="name"
+          [required]="true"
+          [error]="getFieldError('name')"
+          help="Nom et prénom du client"
+        ></app-input>
+
+        <app-input
+          label="Adresse email"
+          type="email"
+          placeholder="client@exemple.com"
+          formControlName="email"
+          [required]="true"
+          [error]="getFieldError('email')"
+          help="Adresse email valide du client"
+        ></app-input>
+      </div>
+
+      <!-- Informations supplémentaires -->
+      <div class="form-grid">
+        <app-input
+          label="Téléphone"
+          type="tel"
+          placeholder="+33 1 23 45 67 89"
+          formControlName="phone"
+          [error]="getFieldError('phone')"
+          help="Numéro de téléphone (optionnel)"
+        ></app-input>
+
+        <app-input
+          label="Date de naissance"
+          type="date"
+          formControlName="birthDate"
+          [error]="getFieldError('birthDate')"
+          help="Date de naissance (optionnel)"
+        ></app-input>
+      </div>
+
+      <app-input
+        label="Adresse"
+        type="text"
+        placeholder="123 Rue de la Paix, 75001 Paris"
+        formControlName="address"
+        [error]="getFieldError('address')"
+        help="Adresse complète du client (optionnel)"
+      ></app-input>
+
+      <!-- Options de compte -->
+      <div class="form-group">
+        <label class="form-label">Créer un compte initial</label>
+        <div class="checkbox-group">
+          <label class="checkbox-option">
+            <input
+              type="checkbox"
+              formControlName="createAccount"
+              class="checkbox-input"
+            />
+            <span class="checkbox-custom"></span>
+            <div class="checkbox-content">
+              <span class="checkbox-title">Créer un compte courant</span>
+              <span class="checkbox-description"
+                >Un compte courant sera automatiquement créé pour ce
+                client</span
+              >
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Solde initial si compte créé -->
+      <div
+        *ngIf="newCustomerFormGroup.get('createAccount')?.value"
+        class="form-group"
+      >
+        <app-input
+          label="Solde initial"
+          type="number"
+          placeholder="0.00"
+          formControlName="initialBalance"
+          [error]="getFieldError('initialBalance')"
+          help="Solde initial du compte en euros"
+        ></app-input>
+      </div>
+
+      <div class="form-actions">
+        <app-button
+          type="submit"
+          variant="primary"
+          [loading]="isLoading"
+          [disabled]="newCustomerFormGroup.invalid"
+        >
+          {{ isLoading ? "Création en cours..." : "Créer le client" }}
+        </app-button>
+        <app-button type="button" variant="secondary" routerLink="/customers">
+          Annuler
+        </app-button>
+      </div>
+    </form>
+  </app-card>
+</div>

@@ -1,0 +1,136 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="text-3xl font-bold">Gestion des clients</h1>
+    <p class="text-secondary">Gérez les informations de vos clients</p>
+  </div>
+
+  <!-- Actions -->
+  <div class="page-actions">
+    <div class="flex items-center justify-between gap-4">
+      <!-- Bouton d'ajout -->
+      <app-button *ngIf="isAdmin" variant="primary" routerLink="/customers/add">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2v20M2 12h20" />
+        </svg>
+        Ajouter un client
+      </app-button>
+
+      <!-- Formulaire de recherche -->
+      <div class="search-form" *ngIf="searchFormGroup">
+        <form
+          [formGroup]="searchFormGroup"
+          (ngSubmit)="findCustomers(searchFormGroup.value.keyword)"
+          class="flex gap-2"
+        >
+          <app-input
+            type="text"
+            placeholder="Rechercher un client..."
+            formControlName="keyword"
+          ></app-input>
+          <app-button type="submit" variant="outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            </svg>
+            Rechercher
+          </app-button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <app-alert
+    *ngIf="errorMessage"
+    type="error"
+    [message]="errorMessage"
+    [dismissible]="true"
+    (dismissed)="clearError()"
+  ></app-alert>
+
+  <!-- Tableau des clients -->
+  <app-card>
+    <div slot="header">
+      <h2 class="text-xl font-semibold">Liste des clients</h2>
+    </div>
+
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let customer of customers$ | async">
+            <td class="font-medium">{{ customer.id }}</td>
+            <td>{{ customer.name }}</td>
+            <td class="text-secondary">{{ customer.email }}</td>
+            <td>
+              <div class="flex gap-2">
+                <app-button
+                  variant="outline"
+                  size="sm"
+                  [routerLink]="['/customers', customer.id]"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+                    />
+                    <path d="M8 1v6h8V1" />
+                  </svg>
+                  Comptes
+                </app-button>
+                <app-button
+                  *ngIf="isAdmin"
+                  variant="error"
+                  size="sm"
+                  (click)="handleDeleteCustomer(customer.id)"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"
+                    />
+                  </svg>
+                  Supprimer
+                </app-button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Message si aucun client -->
+      <div *ngIf="(customers$ | async)?.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+        </div>
+        <h3>Aucun client trouvé</h3>
+        <p class="text-secondary">Commencez par ajouter votre premier client</p>
+        <app-button
+          *ngIf="isAdmin"
+          variant="primary"
+          routerLink="/customers/add"
+        >
+          Ajouter un client
+        </app-button>
+      </div>
+    </div>
+  </app-card>
+</div>

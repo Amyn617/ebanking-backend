@@ -1,0 +1,255 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="text-3xl font-bold">Opérations bancaires</h1>
+    <p class="text-secondary">Effectuez des crédits, débits et transferts</p>
+  </div>
+
+  <!-- Messages d'erreur/succès -->
+  <app-alert
+    *ngIf="errorMessage"
+    type="error"
+    [message]="errorMessage"
+    [dismissible]="true"
+    (dismissed)="clearError()"
+  ></app-alert>
+
+  <app-alert
+    *ngIf="successMessage"
+    type="success"
+    [message]="successMessage"
+    [dismissible]="true"
+    (dismissed)="clearSuccess()"
+  ></app-alert>
+
+  <!-- Onglets pour les différents types d'opérations -->
+  <div class="operation-tabs">
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'simple'"
+      (click)="setActiveTab('simple')"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+      </svg>
+      Opération simple
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'transfer'"
+      (click)="setActiveTab('transfer')"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+      Transfert
+    </button>
+  </div>
+
+  <!-- Formulaire d'opération simple -->
+  <app-card *ngIf="activeTab === 'simple'">
+    <div slot="header">
+      <h2 class="text-xl font-semibold">Nouvelle opération</h2>
+    </div>
+
+    <form
+      [formGroup]="newOperationForm"
+      (ngSubmit)="handleAddOperation()"
+      class="operation-form"
+    >
+      <div class="form-grid">
+        <app-input
+          label="ID du compte"
+          type="text"
+          placeholder="Entrez l'ID du compte"
+          formControlName="accountId"
+          [required]="true"
+          [error]="getFieldError('accountId')"
+        ></app-input>
+
+        <app-input
+          label="Montant"
+          type="number"
+          placeholder="Entrez le montant"
+          formControlName="amount"
+          [required]="true"
+          [error]="getFieldError('amount')"
+          help="Montant en euros (ex: 100.50)"
+        ></app-input>
+      </div>
+
+      <!-- Type d'opération -->
+      <div class="form-group">
+        <label class="form-label">Type d'opération *</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input
+              type="radio"
+              value="CREDIT"
+              formControlName="type"
+              class="radio-input"
+            />
+            <span class="radio-custom"></span>
+            <div class="radio-content">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="text-success"
+              >
+                <path
+                  d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"
+                />
+              </svg>
+              <div>
+                <span class="radio-title">Crédit</span>
+                <span class="radio-description"
+                  >Ajouter de l'argent au compte</span
+                >
+              </div>
+            </div>
+          </label>
+
+          <label class="radio-option">
+            <input
+              type="radio"
+              value="DEBIT"
+              formControlName="type"
+              class="radio-input"
+            />
+            <span class="radio-custom"></span>
+            <div class="radio-content">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="text-error"
+              >
+                <path
+                  d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"
+                />
+              </svg>
+              <div>
+                <span class="radio-title">Débit</span>
+                <span class="radio-description"
+                  >Retirer de l'argent du compte</span
+                >
+              </div>
+            </div>
+          </label>
+        </div>
+        <div *ngIf="getFieldError('type')" class="form-error">
+          {{ getFieldError("type") }}
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <app-input
+          label="Date de l'opération"
+          type="date"
+          formControlName="operationDate"
+          [required]="true"
+          [error]="getFieldError('operationDate')"
+        ></app-input>
+
+        <app-input
+          label="Description"
+          type="text"
+          placeholder="Description de l'opération"
+          formControlName="description"
+          [required]="true"
+          [error]="getFieldError('description')"
+        ></app-input>
+      </div>
+
+      <div class="form-actions">
+        <app-button
+          type="submit"
+          variant="primary"
+          [loading]="isLoading"
+          [disabled]="newOperationForm.invalid"
+        >
+          {{ isLoading ? "Traitement..." : "Effectuer l'opération" }}
+        </app-button>
+        <app-button type="button" variant="secondary" (clicked)="resetForm()">
+          Réinitialiser
+        </app-button>
+      </div>
+    </form>
+  </app-card>
+
+  <!-- Formulaire de transfert -->
+  <app-card *ngIf="activeTab === 'transfer'">
+    <div slot="header">
+      <h2 class="text-xl font-semibold">Transfert entre comptes</h2>
+    </div>
+
+    <form
+      [formGroup]="transferForm"
+      (ngSubmit)="handleTransfer()"
+      class="operation-form"
+    >
+      <div class="form-grid">
+        <app-input
+          label="Compte source"
+          type="text"
+          placeholder="ID du compte à débiter"
+          formControlName="accountSource"
+          [required]="true"
+          [error]="getTransferFieldError('accountSource')"
+        ></app-input>
+
+        <app-input
+          label="Compte destination"
+          type="text"
+          placeholder="ID du compte à créditer"
+          formControlName="accountDestination"
+          [required]="true"
+          [error]="getTransferFieldError('accountDestination')"
+        ></app-input>
+      </div>
+
+      <app-input
+        label="Montant à transférer"
+        type="number"
+        placeholder="Entrez le montant"
+        formControlName="amount"
+        [required]="true"
+        [error]="getTransferFieldError('amount')"
+        help="Montant en euros (ex: 100.50)"
+      ></app-input>
+
+      <app-input
+        label="Description du transfert"
+        type="text"
+        placeholder="Motif du transfert"
+        formControlName="description"
+        [required]="true"
+        [error]="getTransferFieldError('description')"
+      ></app-input>
+
+      <div class="form-actions">
+        <app-button
+          type="submit"
+          variant="primary"
+          [loading]="isTransferLoading"
+          [disabled]="transferForm.invalid"
+        >
+          {{
+            isTransferLoading
+              ? "Transfert en cours..."
+              : "Effectuer le transfert"
+          }}
+        </app-button>
+        <app-button
+          type="button"
+          variant="secondary"
+          (clicked)="resetTransferForm()"
+        >
+          Réinitialiser
+        </app-button>
+      </div>
+    </form>
+  </app-card>
+</div>

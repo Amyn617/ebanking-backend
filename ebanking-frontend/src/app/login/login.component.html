@@ -1,0 +1,90 @@
+<div class="min-h-screen flex items-center justify-center">
+  <div class="container">
+    <div class="flex justify-center">
+      <div class="w-full max-w-md">
+        <!-- Logo et titre -->
+        <div class="text-center mb-8">
+          <div class="flex justify-center mb-4">
+            <div class="logo-icon">
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="text-primary-500"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                />
+              </svg>
+            </div>
+          </div>
+          <h1 class="text-3xl font-bold text-primary">Banque Numérique</h1>
+          <p class="text-secondary mt-2">
+            Connectez-vous à votre espace bancaire
+          </p>
+        </div>
+
+        <!-- Formulaire de connexion -->
+        <app-card>
+          <div slot="header">
+            <h2 class="text-xl font-semibold text-center">Connexion</h2>
+          </div>
+
+          <!-- Messages d'erreur -->
+          <app-alert
+            *ngIf="errorMessage"
+            type="error"
+            [message]="errorMessage"
+            [dismissible]="true"
+            (dismissed)="clearError()"
+          ></app-alert>
+
+          <!-- Formulaire -->
+          <form
+            [formGroup]="loginForm"
+            (ngSubmit)="onSubmit()"
+            class="space-y-6"
+          >
+            <app-input
+              label="Nom d'utilisateur"
+              type="text"
+              placeholder="Entrez votre nom d'utilisateur"
+              formControlName="username"
+              [required]="true"
+              [error]="getFieldError('username')"
+            ></app-input>
+
+            <app-input
+              label="Mot de passe"
+              type="password"
+              placeholder="Entrez votre mot de passe"
+              formControlName="password"
+              [required]="true"
+              [error]="getFieldError('password')"
+            ></app-input>
+
+            <app-button
+              type="submit"
+              variant="primary"
+              size="lg"
+              [fullWidth]="true"
+              [loading]="isLoading"
+              [disabled]="loginForm.invalid"
+            >
+              {{ isLoading ? "Connexion en cours..." : "Se connecter" }}
+            </app-button>
+          </form>
+
+          <div slot="footer">
+            <div class="text-center text-sm text-muted">
+              <p>Comptes de démonstration :</p>
+              <p><strong>Utilisateur :</strong> user1 / 12345</p>
+              <p><strong>Administrateur :</strong> admin / 12345</p>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </div>
+  </div>
+</div>

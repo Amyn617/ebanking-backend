@@ -1,0 +1,229 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="text-3xl font-bold">Gestion des comptes</h1>
+    <p class="text-secondary">Consultez et gérez les comptes bancaires</p>
+  </div>
+
+  <!-- Actions et recherche -->
+  <div class="page-actions">
+    <div class="flex items-center justify-between gap-4">
+      <!-- Boutons d'actions admin -->
+      <div class="flex gap-2" *ngIf="isAdmin">
+        <app-button variant="primary" routerLink="/operations">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+          </svg>
+          Nouvelle opération
+        </app-button>
+      </div>
+
+      <!-- Formulaire de recherche -->
+      <div class="search-form" *ngIf="searchFormGroup">
+        <form
+          [formGroup]="searchFormGroup"
+          (ngSubmit)="findAccount(searchFormGroup.value.accountId)"
+          class="flex gap-2"
+        >
+          <app-input
+            type="text"
+            placeholder="ID du compte..."
+            formControlName="accountId"
+          ></app-input>
+          <app-button type="submit" variant="outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            </svg>
+            Rechercher
+          </app-button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <app-alert
+    *ngIf="errorMessage"
+    type="error"
+    [message]="errorMessage"
+    [dismissible]="true"
+    (dismissed)="clearError()"
+  ></app-alert>
+
+  <!-- Indicateur de chargement -->
+  <app-card *ngIf="isLoading">
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Chargement des données du compte...</p>
+    </div>
+  </app-card>
+
+  <!-- Message d'information -->
+  <app-card
+    *ngIf="searchFormGroup?.value.accountId === '' && !accounts && !isLoading"
+  >
+    <div class="empty-state">
+      <div class="empty-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+          />
+          <path d="M8 1v6h8V1" />
+        </svg>
+      </div>
+      <h3>Rechercher un compte</h3>
+      <p class="text-secondary">
+        Entrez l'ID d'un compte pour voir ses détails et opérations
+      </p>
+    </div>
+  </app-card>
+
+  <!-- Détails du compte -->
+  <app-card *ngIf="accounts | async as accountDetails">
+    <div slot="header">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Détails du compte</h2>
+        <div class="account-type-badge">
+          <span class="badge badge-info">Compte bancaire</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="account-info-grid">
+      <div class="account-info-item">
+        <label>ID du compte</label>
+        <span class="font-medium">{{ accountDetails.accountId }}</span>
+      </div>
+      <div class="account-info-item">
+        <label>Solde actuel</label>
+        <span class="balance" [class]="getBalanceClass(accountDetails.balance)">
+          {{
+            accountDetails.balance
+              | currency : "EUR" : "symbol" : "1.2-2" : "fr"
+          }}
+        </span>
+      </div>
+      <div
+        class="account-info-item"
+        *ngIf="accountDetails.currentPage !== undefined"
+      >
+        <label>Page actuelle</label>
+        <span
+          >{{ accountDetails.currentPage + 1 }} /
+          {{ accountDetails.totalPage }}</span
+        >
+      </div>
+      <div class="account-info-item" *ngIf="accountDetails.pageSize">
+        <label>Opérations par page</label>
+        <span>{{ accountDetails.pageSize }}</span>
+      </div>
+    </div>
+  </app-card>
+
+  <!-- Historique des opérations -->
+  <app-card *ngIf="accounts | async as accountDetails">
+    <div slot="header">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Historique des opérations</h2>
+        <div class="operations-summary">
+          <span class="text-sm text-secondary">
+            {{ (accountDetails.accountOperations || []).length }} opération(s)
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table
+        class="table"
+        *ngIf="
+          accountDetails.accountOperations &&
+          accountDetails.accountOperations.length > 0
+        "
+      >
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Montant</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let operation of accountDetails.accountOperations">
+            <td class="font-medium">{{ operation.id }}</td>
+            <td [class]="getOperationAmountClass(operation.amount)">
+              {{
+                operation.amount | currency : "EUR" : "symbol" : "1.2-2" : "fr"
+              }}
+            </td>
+            <td>{{ operation.description }}</td>
+            <td>
+              <span
+                class="badge"
+                [class]="getOperationTypeBadge(operation.type)"
+              >
+                {{ getOperationTypeLabel(operation.type) }}
+              </span>
+            </td>
+            <td class="text-secondary">
+              {{ operation.operationDate | date : "dd/MM/yyyy HH:mm" : "fr" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Message si aucune opération -->
+      <div
+        *ngIf="
+          !accountDetails.accountOperations ||
+          accountDetails.accountOperations.length === 0
+        "
+        class="empty-state"
+      >
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+          </svg>
+        </div>
+        <h3>Aucune opération</h3>
+        <p class="text-secondary">Ce compte n'a pas encore d'opérations</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="accountDetails.totalPage > 1" class="pagination-container">
+      <div class="pagination">
+        <button
+          class="page-link"
+          [disabled]="accountDetails.currentPage === 0"
+          (click)="goToPage(accountDetails.currentPage - 1)"
+        >
+          Précédent
+        </button>
+
+        <button
+          *ngFor="
+            let page of getPageNumbers(accountDetails.totalPage);
+            let i = index
+          "
+          class="page-link"
+          [class.active]="page - 1 === accountDetails.currentPage"
+          (click)="goToPage(page - 1)"
+        >
+          {{ page }}
+        </button>
+
+        <button
+          class="page-link"
+          [disabled]="
+            accountDetails.currentPage === accountDetails.totalPage - 1
+          "
+          (click)="goToPage(accountDetails.currentPage + 1)"
+        >
+          Suivant
+        </button>
+      </div>
+    </div>
+  </app-card>
+</div>
