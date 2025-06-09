@@ -2,7 +2,8 @@
 
 ## Vidéos de Présentation
 
-[Vidéo de présentation](https://drive.google.com/file/d/1_-hYBY0M3dgx5dDnvAGOGkcRVTo7q1jG/view?usp=sharing](https://drive.google.com/file/d/1KQ0hUH4P5e9g4rFvqbDHU9TQqh54TSAg/view)
+[![Watch the video](https://drive.google.com/file/d/1_-hYBY0M3dgx5dDnvAGOGkcRVTo7q1jG/view?usp=sharing)](https://drive.google.com/file/d/1KQ0hUH4P5e9g4rFvqbDHU9TQqh54TSAg/view)
+
 
 ## Introduction
 
