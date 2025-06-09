@@ -11,6 +11,7 @@ import { ButtonComponent } from '../shared/components/button/button.component';
 import { CardComponent } from '../shared/components/card/card.component';
 import { InputComponent } from '../shared/components/input/input.component';
 import { AlertComponent } from '../shared/components/alert/alert.component';
+import { CustomerCardComponent } from '../shared/components/customer-card/customer-card.component';
 
 @Component({
   selector: 'app-customers',
@@ -24,6 +25,7 @@ import { AlertComponent } from '../shared/components/alert/alert.component';
     CardComponent,
     InputComponent,
     AlertComponent,
+    CustomerCardComponent,
   ],
   templateUrl: './customers.component.html',
 })
@@ -32,6 +34,7 @@ export class CustomersComponent implements OnInit {
   searchFormGroup: FormGroup;
   isAdmin: boolean = false;
   errorMessage: string = '';
+  viewMode: 'list' | 'cards' = 'cards'; // Vue cartes par défaut
 
   constructor(
     private customerService: CustomerService,
@@ -97,5 +100,13 @@ export class CustomersComponent implements OnInit {
 
   clearError(): void {
     this.errorMessage = '';
+  }
+
+  toggleViewMode(): void {
+    this.viewMode = this.viewMode === 'list' ? 'cards' : 'list';
+  }
+
+  onDeleteCustomerFromCard(customer: Customer): void {
+    this.handleDeleteCustomer(customer.id);
   }
 }

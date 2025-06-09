@@ -5,6 +5,7 @@ import { NewCustomerComponent } from './new-customer/new-customer.component';
 import { NewOperationComponent } from './new-operation/new-operation.component';
 import { CustomerAccountComponent } from './customer-account/customer-account.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AccountManagementComponent } from './account-management/account-management.component';
 import { adminGuard } from './guards/admin.guard';
 import { LoginComponent } from './login/login.component';
 import { authGuard } from './guards/auth.guard';
@@ -52,6 +53,16 @@ export const routes: Routes = [
   {
     path: 'customers/:id',
     component: CustomerAccountComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'account-management',
+    component: AccountManagementComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'account-management/:id',
+    component: AccountManagementComponent,
     canActivate: [authGuard],
   },
 ];

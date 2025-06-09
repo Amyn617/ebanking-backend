@@ -4,6 +4,24 @@
     <p class="text-secondary">Consultez et gérez les comptes bancaires</p>
   </div>
 
+  <!-- Actions rapides -->
+  <div class="quick-actions" *ngIf="isAdmin">
+    <app-button variant="primary" routerLink="/operations">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2v20M2 12h20" />
+      </svg>
+      Nouvelle opération
+    </app-button>
+    <app-button variant="outline" (click)="refreshAccounts()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+        />
+      </svg>
+      Actualiser
+    </app-button>
+  </div>
+
   <!-- Actions et recherche -->
   <div class="page-actions">
     <div class="flex items-center justify-between gap-4">

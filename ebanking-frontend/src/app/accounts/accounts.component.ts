@@ -13,6 +13,7 @@ import { Observable, of } from 'rxjs';
 import { AccountDetails } from '../model/account.model';
 import { AccountService } from '../services/account.service';
 import { AuthService } from '../services/auth.service';
+import { ToastService } from '../shared/services/toast.service';
 import { ButtonComponent } from '../shared/components/button/button.component';
 import { CardComponent } from '../shared/components/card/card.component';
 import { InputComponent } from '../shared/components/input/input.component';
@@ -50,7 +51,8 @@ export class AccountsComponent implements OnInit {
     private router: Router,
     private accountService: AccountService,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastService: ToastService
   ) {}
 
   findAccount(accountId: string, page: number = 0) {
@@ -135,5 +137,17 @@ export class AccountsComponent implements OnInit {
       pages.push(i);
     }
     return pages;
+  }
+
+  refreshAccounts(): void {
+    if (this.currentAccountId) {
+      this.toastService.info('Actualisation des données...', 'Actualisation');
+      this.findAccount(this.currentAccountId, this.currentPage);
+    } else {
+      this.toastService.warning(
+        "Veuillez d'abord rechercher un compte",
+        'Aucun compte sélectionné'
+      );
+    }
   }
 }
